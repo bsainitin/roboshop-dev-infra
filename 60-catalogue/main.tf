@@ -31,10 +31,24 @@ resource "terraform_data" "catalogue" {
     destination = "/tmp/catalogue.sh"
   }
 
+#  Connect to instance using remote-exec provisioner through terraform data
   provisioner "remote-exec" {
     inline = [ 
         "chmod +x /tmp/catalogue.sh",
         "sudo sh /tmp/catalogue.sh catalogue ${var.environment}"
      ]
   }
+}
+
+# STOP INSTANCE TO TAKE IMAGE
+resource "aws_ec2_instance_state" "catalogue" {
+  instance_id = aws_instance.catalogue.id
+  state       = "stopped"
+  depends_on = [ terraform_data.catalogue ]
+}
+
+resource "aws_ami_from_instance" "catalogue" {
+  name               = "${local.common_name_suffix}-catalogue-ami"
+  source_instance_id = aws_instance.catalogue.id
+  depends_on = [ aws_ec2_instance_state.catalogue ]
 }
