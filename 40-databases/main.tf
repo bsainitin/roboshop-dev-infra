@@ -1,3 +1,4 @@
+#  CREATE MONGODB INSTANCE
 resource "aws_instance" "mongodb" {
   ami = local.ami_id
   instance_type = "t3.micro"
@@ -39,6 +40,7 @@ resource "terraform_data" "mongodb" {
   }
 }
 
+#  CREATE REDIS INSTANCE
 resource "aws_instance" "redis" {
   ami = local.ami_id
   instance_type = "t3.micro"
@@ -79,6 +81,7 @@ resource "terraform_data" "redis" {
   }
 }
 
+#  CREATE RABBITMQ INSTANCE
 resource "aws_instance" "rabbitmq" {
   ami = local.ami_id
   instance_type = "t3.micro"
@@ -119,7 +122,7 @@ resource "terraform_data" "rabbitmq" {
   }
 }
 
-
+#  CREATE MYSQL INSTANCE
 resource "aws_instance" "mysql" {
   ami = local.ami_id
   instance_type = "t3.micro"
@@ -164,4 +167,44 @@ resource "terraform_data" "mysql" {
         "sudo sh /tmp/bootstrap.sh mysql dev"
      ]
   }
+}
+
+#  MONGODB ROUTE 53 RECORD
+resource "aws_route53_record" "mongodb" {
+  zone_id = local.hosted_zone_id
+  name    = "mongodb-${var.environment}.${var.domian_name}"
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.mongodb.private_ip]
+  allow_overwrite = true
+}
+
+#  REDIS ROUTE 53 RECORD
+resource "aws_route53_record" "redis" {
+  zone_id = local.hosted_zone_id
+  name    = "redis-${var.environment}.${var.domian_name}"
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.redis.private_ip]
+  allow_overwrite = true
+}
+
+#  RABBITMQ ROUTE 53 RECORD
+resource "aws_route53_record" "rabbitmq" {
+  zone_id = local.hosted_zone_id
+  name    = "rabbitmq-${var.environment}.${var.domian_name}"
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.rabbitmq.private_ip]
+  allow_overwrite = true
+}
+
+#  MYSQL ROUTE 53 RECORD
+resource "aws_route53_record" "mysql" {
+  zone_id = local.hosted_zone_id
+  name    = "mysql-${var.environment}.${var.domian_name}"
+  type    = "A"
+  ttl     = 1
+  records = [aws_instance.mysql.private_ip]
+  allow_overwrite = true
 }

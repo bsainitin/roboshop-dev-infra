@@ -5,3 +5,7 @@ variable "project_name" {
 variable "environment" {
   default = "dev"
 }
+
+variable "domian_name" {
+  default = "theawsdevops.space"
+}
