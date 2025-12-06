@@ -18,5 +18,5 @@ resource "aws_instance" "bastion" {
 
 resource "aws_iam_instance_profile" "bastion" {
   name = "bastion"
-  role = "AWSCLICredentialsRead"
+  role = "EC2AWSCLICredentialsRead"
 }
